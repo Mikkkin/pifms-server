@@ -1,0 +1,56 @@
+# Build output — игнорировать все target во всех подпапках
+target/
+
+# Keep Maven wrapper scripts and wrapper config in repo
+!mvnw
+!mvnw.cmd
+
+# Ignore everything in .mvn but keep wrapper and jvm config
+.mvn/*
+!.mvn/wrapper/
+!.mvn/wrapper/maven-wrapper.jar
+!.mvn/wrapper/maven-wrapper.properties
+!.mvn/jvm.config
+
+# Ignore help files
+HELP.md
+
+### IntelliJ IDEA ###
+.idea/modules.xml
+.idea/jarRepositories.xml
+.idea/compiler.xml
+.idea/libraries/
+*.iws
+*.iml
+*.ipr
+
+### Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### Mac OS ###
+.DS_Store
+
+### certs ###
+*.jks
+*.crt
+src/main/resources/*.jks
+src/main/resources/*.crt

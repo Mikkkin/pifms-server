@@ -1,0 +1,63 @@
+name: CI for ssd lab project 
+
+on:
+    push:
+        branches:
+        - main
+    pull_request:
+        branches:
+        - main
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        container:
+            image: maven:3.9.11-eclipse-temurin-21-noble
+        
+        services:
+            postgres:
+                image: postgres:14
+                env:
+                    POSTGRES_USER: ${{ secrets.JDBC_USERNAME }}
+                    POSTGRES_PASSWORD: ${{ secrets.JDBC_PASSWORD }}
+                    POSTGRES_DB: studydb
+                ports:
+                    - 5432:5432
+                options: >-
+                    --health-cmd="pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"
+                    --health-interval=10s
+                    --health-timeout=5s
+                    --health-retries=10
+
+        env:
+            JDBC_URL: jdbc:postgresql://postgres:5432/studydb
+            JDBC_USERNAME: ${{ secrets.JDBC_USERNAME }} 
+            JDBC_PASSWORD: ${{ secrets.JDBC_PASSWORD }} 
+            JWT_SECRET: ${{ secrets.JWT_SECRET }} 
+            admin_name: ${{ secrets.admin_name }} 
+            admin_mail: ${{ secrets.admin_mail }} 
+            password_main: ${{ secrets.password_main }} 
+            JKS_NAME: ${{ secrets.JKS_NAME }} 
+            JKS_PASSWORD: ${{ secrets.JKS_PASSWORD }} 
+            KEY_NAME: ${{ secrets.KEY_NAME }} 
+            JKS_B: ${{ secrets.JKS_B  }} 
+        
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+            
+            - name: decode jks
+              run: |-
+                echo "$JKS_B" | base64 -d > "src/main/resources/${JKS_NAME}" 
+            
+            
+            - name: Clean, test and package project
+              run: mvn -B clean test package
+            
+            - name: Upload JAR artifact
+              if: always()
+              uses: actions/upload-artifact@v4
+              with:
+                name: code-report
+                path: ./target/*.jar
