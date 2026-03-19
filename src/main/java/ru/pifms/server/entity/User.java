@@ -27,7 +27,7 @@ import lombok.Setter;
 @Table(
     name = "users",
     indexes = {
-        @Index(name = "ix_users_username", columnList = "username", unique = true),
+        @Index(name = "ix_users_name", columnList = "name", unique = true),
         @Index(name = "ix_users_email", columnList = "email", unique = true)
     }
 )
@@ -37,14 +37,26 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 50)
+    @Column(name = "name", nullable = false, unique = true, length = 50)
     private String username;
 
     @Column(nullable = false, unique = true, length = 254)
     private String email;
 
-    @Column(nullable = false)
+    @Column(name = "password_hash", nullable = false)
     private String password;
+
+    @Column(name = "is_account_expired", nullable = false)
+    private boolean accountExpired;
+
+    @Column(name = "is_account_locked", nullable = false)
+    private boolean accountLocked;
+
+    @Column(name = "is_credentials_expired", nullable = false)
+    private boolean credentialsExpired;
+
+    @Column(name = "is_disabled", nullable = false)
+    private boolean disabled;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
