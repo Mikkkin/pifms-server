@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
@@ -35,17 +35,18 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 Jws<Claims> jws = jwt.parseAndValidate(token);
                 if (jwt.isAccessToken(jws)) {
                     String username = jws.getBody().getSubject();
+                    Number uid = (Number) jws.getBody().get("uid");
                     @SuppressWarnings("unchecked")
                     List<String> roles = (List<String>) jws.getBody().get("roles");
                     Collection<SimpleGrantedAuthority> authorities =
                         roles.stream().map(r -> new SimpleGrantedAuthority("ROLE_" + r.toUpperCase())).toList();
 
-                    AbstractAuthenticationToken authentication =
-                        new AbstractAuthenticationToken(authorities) {
-                            @Override public Object getCredentials() { return token; }
-                            @Override public Object getPrincipal() { return username; }
-                        };
-                    authentication.setAuthenticated(true);
+                    AuthenticatedUserPrincipal principal = new AuthenticatedUserPrincipal(
+                        uid == null ? null : uid.longValue(),
+                        username
+                    );
+                    UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(principal, token, authorities);
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             } catch (Exception ignored) {

@@ -10,10 +10,10 @@ import ru.pifms.server.exception.InvalidPassword;
 @Service
 public class PasswordService {
     
-    private static final Pattern uppercase = Pattern.compile("[A-Z]");
-    private static final Pattern lowercase = Pattern.compile("[a-z]");
-    private static final Pattern digits = Pattern.compile("[0-9]");
-    private static final Pattern spechr = Pattern.compile("[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>?]");
+    private static final Pattern UPPERCASE = Pattern.compile("[A-Z]");
+    private static final Pattern LOWERCASE = Pattern.compile("[a-z]");
+    private static final Pattern DIGITS = Pattern.compile("[0-9]");
+    private static final Pattern SPECIAL_CHARS = Pattern.compile("[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>?]");
 
     private static final int MIN_LENGTH = 12;
     private static final int MAX_LENGTH = 100;
@@ -36,25 +36,25 @@ public class PasswordService {
             );
         }
 
-        if (!uppercase.matcher(password).find()) {
+        if (!UPPERCASE.matcher(password).find()) {
             throw new InvalidPassword(
                 "Password must contain at least one uppercase letter"
             );
         }
 
-        if (!lowercase.matcher(password).find()) {
+        if (!LOWERCASE.matcher(password).find()) {
             throw new InvalidPassword(
                 "Password must contain at least one lowercase letter"
             );
         }
 
-        if (!digits.matcher(password).find()) {
+        if (!DIGITS.matcher(password).find()) {
             throw new InvalidPassword(
                 "Password must contain at least one digit"
             );
         }
 
-        if (!spechr.matcher(password).find()) {
+        if (!SPECIAL_CHARS.matcher(password).find()) {
             throw new InvalidPassword(
                 "Password must contain at least one special character"
             );

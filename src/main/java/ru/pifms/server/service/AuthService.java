@@ -47,8 +47,12 @@ public class AuthService {
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setAccountExpired(false);
+        user.setAccountLocked(false);
+        user.setCredentialsExpired(false);
+        user.setDisabled(false);
 
-        Role defaultRole = roleRepository.findByName(RoleType.role_user)
+        Role defaultRole = roleRepository.findByName(RoleType.USER)
             .orElseThrow(() -> new RuntimeException("Role user not found"));
         
         Set<Role> roles = new HashSet<>();
@@ -96,7 +100,7 @@ public class AuthService {
                 String.format("User with ID '%d' not found", userId)
             ));
         
-        Role role = roleRepository.findByName(RoleType.valueOf(roleName))
+        Role role = roleRepository.findByName(RoleType.fromInput(roleName))
             .orElseThrow(() -> new RuntimeException(
                 String.format("Role '%s' not found", roleName)
             ));
@@ -114,7 +118,7 @@ public class AuthService {
                 String.format("User with ID '%d' not found", userId)
             ));
         
-        Role role = roleRepository.findByName(RoleType.valueOf(roleName))
+        Role role = roleRepository.findByName(RoleType.fromInput(roleName))
             .orElseThrow(() -> new RuntimeException(
                 String.format("Role '%s' not found", roleName)
             ));

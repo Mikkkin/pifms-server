@@ -1,9 +1,8 @@
 package ru.pifms.server.entity;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -31,7 +30,7 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = RoleTypeConverter.class)
     @Column(nullable = false, unique = true, length = 50)
     private RoleType name;
 
@@ -43,19 +42,43 @@ public class Role {
     }
 
     public enum RoleType {
-        role_admin("ADMIN"),
-        role_hr("HR"),
-        role_candidate("Candidate"),
-        role_user("User");
+        ADMIN("role_admin", "ADMIN"),
+        USER("role_user", "USER");
 
+        private final String dbValue;
         private final String description;
 
-        RoleType(String description) {
+        RoleType(String dbValue, String description) {
+            this.dbValue = dbValue;
             this.description = description;
+        }
+
+        public String getDbValue() {
+            return dbValue;
         }
 
         public String getDescription() {
             return description;
+        }
+
+        public static RoleType fromDbValue(String dbValue) {
+            for (RoleType roleType : values()) {
+                if (roleType.dbValue.equalsIgnoreCase(dbValue)) {
+                    return roleType;
+                }
+            }
+            throw new IllegalArgumentException("Unknown role db value: " + dbValue);
+        }
+
+        public static RoleType fromInput(String value) {
+            for (RoleType roleType : values()) {
+                if (roleType.name().equalsIgnoreCase(value)
+                    || roleType.dbValue.equalsIgnoreCase(value)
+                    || roleType.description.equalsIgnoreCase(value)) {
+                    return roleType;
+                }
+            }
+            throw new IllegalArgumentException("Unknown role: " + value);
         }
     }
 }
