@@ -54,3 +54,6 @@ build/
 *.crt
 src/main/resources/*.jks
 src/main/resources/*.crt
+
+### Other ###
+src/test/

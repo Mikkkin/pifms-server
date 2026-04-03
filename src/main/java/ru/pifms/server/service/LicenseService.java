@@ -1,15 +1,8 @@
 package ru.pifms.server.service;
 
-import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Base64;
 import java.util.UUID;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -17,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import ru.mfa.signature.DigitalSignatureService;
 import ru.pifms.server.dto.ActivateLicenseRequestDTO;
 import ru.pifms.server.dto.CheckLicenseRequestDTO;
 import ru.pifms.server.dto.CreateLicenseRequestDTO;
@@ -49,8 +43,8 @@ public class LicenseService {
 	private final ProductRepository productRepository;
 	private final LicenseTypeRepository licenseTypeRepository;
 	private final ApplicationUserService applicationUserService;
+	private final DigitalSignatureService digitalSignatureService;
 	private final long ticketLifetimeSeconds;
-	private final String ticketSecret;
 
 	public LicenseService(
 		LicenseRepository licenseRepository,
@@ -60,8 +54,8 @@ public class LicenseService {
 		ProductRepository productRepository,
 		LicenseTypeRepository licenseTypeRepository,
 		ApplicationUserService applicationUserService,
-		@Value("${license.ticket.ttl-seconds:300}") long ticketLifetimeSeconds,
-		@Value("${jwt.secret}") String ticketSecret
+		DigitalSignatureService digitalSignatureService,
+		@Value("${license.ticket.ttl-seconds:300}") long ticketLifetimeSeconds
 	) {
 		this.licenseRepository = licenseRepository;
 		this.deviceRepository = deviceRepository;
@@ -70,8 +64,8 @@ public class LicenseService {
 		this.productRepository = productRepository;
 		this.licenseTypeRepository = licenseTypeRepository;
 		this.applicationUserService = applicationUserService;
+		this.digitalSignatureService = digitalSignatureService;
 		this.ticketLifetimeSeconds = ticketLifetimeSeconds;
-		this.ticketSecret = ticketSecret;
 	}
 
 	@Transactional
@@ -238,31 +232,8 @@ public class LicenseService {
 
 		return TicketResponse.builder()
 			.ticket(ticket)
-			.signature(signTicket(ticket))
+			.signature(digitalSignatureService.sign(ticket))
 			.build();
-	}
-
-	private String signTicket(TicketDTO ticket) {
-		try {
-			Mac mac = Mac.getInstance("HmacSHA256");
-			mac.init(new SecretKeySpec(ticketSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
-			byte[] signature = mac.doFinal(ticketPayload(ticket).getBytes(StandardCharsets.UTF_8));
-			return Base64.getUrlEncoder().withoutPadding().encodeToString(signature);
-		} catch (NoSuchAlgorithmException | InvalidKeyException e) {
-			throw new IllegalStateException("Unable to sign ticket", e);
-		}
-	}
-
-	private String ticketPayload(TicketDTO ticket) {
-		return String.join("|",
-			ticket.getServerDate() == null ? "" : ticket.getServerDate().toString(),
-			Long.toString(ticket.getTicketLifetimeSeconds()),
-			ticket.getActivationDate() == null ? "" : ticket.getActivationDate().toString(),
-			ticket.getExpirationDate() == null ? "" : ticket.getExpirationDate().toString(),
-			ticket.getUserId() == null ? "" : ticket.getUserId().toString(),
-			ticket.getDeviceId() == null ? "" : ticket.getDeviceId().toString(),
-			Boolean.toString(ticket.isBlocked())
-		);
 	}
 
 	private LicenseResponseDTO toResponse(License license) {

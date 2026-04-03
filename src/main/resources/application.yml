@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: server
+  datasource:
+    url: ${JDBC_URL}
+    username: ${JDBC_USERNAME}
+    password: ${JDBC_PASSWORD}
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  security:
+    filter:
+      dispatcher-types: ASYNC,ERROR,REQUEST
+
+server:
+  port: 8443
+  ssl:
+    enabled: true
+    key-store: classpath:${JKS_NAME}
+    key-store-type: JKS
+    key-store-password: ${JKS_PASSWORD}
+    key-alias: ${KEY_NAME}
+
+jwt:
+  issuer: pifms
+  secret: ${JWT_SECRET}
+  access:
+    ttl-seconds: 600
+  refresh:
+    ttl-seconds: 3600
+
+license:
+  ticket:
+    ttl-seconds: 300
+
+signature:
+  key-store-path: classpath:${JKS_NAME}
+  key-store-type: JKS
+  key-store-password: ${JKS_PASSWORD}
+  key-alias: ${KEY_NAME}
+  key-password: ${SIGNATURE_KEY_PASSWORD:${JKS_PASSWORD}}
+  algorithm: ${SIGNATURE_ALGORITHM:SHA256withRSA}
