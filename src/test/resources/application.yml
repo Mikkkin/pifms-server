@@ -1,0 +1,38 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:pifms-test;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+
+server:
+  ssl:
+    enabled: false
+
+jwt:
+  issuer: pifms-test
+  secret: test-secret-key-test-secret-key-test-secret-key
+  access:
+    ttl-seconds: 600
+  refresh:
+    ttl-seconds: 3600
+
+license:
+  ticket:
+    ttl-seconds: 300
+
+malware-signatures:
+  first-bytes-hex-length: 16
+
+signature:
+  key-store-path: classpath:signing.jks
+  key-store-type: JKS
+  key-store-password: changeit
+  key-alias: app-signing
+  key-password: changeit
+  algorithm: SHA256withRSA

@@ -57,3 +57,23 @@ src/main/resources/*.crt
 
 ### Other ###
 src/test/
+!src/test/
+src/test/*
+!src/test/java/
+src/test/java/*
+!src/test/java/ru/
+src/test/java/ru/*
+!src/test/java/ru/pifms/
+src/test/java/ru/pifms/*
+!src/test/java/ru/pifms/server/
+src/test/java/ru/pifms/server/*
+!src/test/java/ru/pifms/server/service/
+src/test/java/ru/pifms/server/service/*
+!src/test/java/ru/pifms/server/service/MalwareSignatureServiceTest.java
+!src/test/resources/
+src/test/resources/*
+!src/test/resources/application.yml
+!src/test/resources/mockito-extensions/
+src/test/resources/mockito-extensions/*
+!src/test/resources/mockito-extensions/org.mockito.plugins.MockMaker
+!src/test/resources/signing.jks

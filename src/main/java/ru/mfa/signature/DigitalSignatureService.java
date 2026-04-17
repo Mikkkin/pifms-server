@@ -30,6 +30,23 @@ public class DigitalSignatureService {
         }
     }
 
+    public boolean verify(Object payload, String signatureBase64) {
+        if (signatureBase64 == null || signatureBase64.isBlank()) {
+            return false;
+        }
+
+        byte[] canonicalBytes = canonicalize(payload);
+
+        try {
+            Signature signature = Signature.getInstance(resolveAlgorithm());
+            signature.initVerify(signatureKeyStoreService.getPublicKey());
+            signature.update(canonicalBytes);
+            return signature.verify(Base64.getDecoder().decode(signatureBase64));
+        } catch (IllegalArgumentException | GeneralSecurityException ex) {
+            return false;
+        }
+    }
+
     public byte[] canonicalize(Object payload) {
         return jsonCanonicalizer.canonizeJson(payload).getBytes(StandardCharsets.UTF_8);
     }

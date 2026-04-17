@@ -35,6 +35,9 @@ license:
   ticket:
     ttl-seconds: 300
 
+malware-signatures:
+  first-bytes-hex-length: ${MALWARE_SIGNATURE_FIRST_BYTES_HEX_LENGTH:16}
+
 signature:
   key-store-path: classpath:${JKS_NAME}
   key-store-type: JKS
