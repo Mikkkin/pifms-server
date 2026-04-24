@@ -19,12 +19,18 @@ public class DigitalSignatureService {
 
     public String sign(Object payload) {
         byte[] canonicalBytes = canonicalize(payload);
+        return Base64.getEncoder().encodeToString(signBytes(canonicalBytes));
+    }
 
+    public byte[] signBytes(byte[] payloadBytes) {
+        if (payloadBytes == null) {
+            throw new IllegalArgumentException("payloadBytes must not be null");
+        }
         try {
             Signature signature = Signature.getInstance(resolveAlgorithm());
             signature.initSign(signatureKeyStoreService.getPrivateKey());
-            signature.update(canonicalBytes);
-            return Base64.getEncoder().encodeToString(signature.sign());
+            signature.update(payloadBytes);
+            return signature.sign();
         } catch (GeneralSecurityException ex) {
             throw new IllegalStateException("Failed to sign payload", ex);
         }

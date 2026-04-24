@@ -70,6 +70,14 @@ src/test/java/ru/pifms/server/*
 !src/test/java/ru/pifms/server/service/
 src/test/java/ru/pifms/server/service/*
 !src/test/java/ru/pifms/server/service/MalwareSignatureServiceTest.java
+!src/test/java/ru/pifms/server/binary/
+src/test/java/ru/pifms/server/binary/*
+!src/test/java/ru/pifms/server/binary/BinarySignaturePackageBuilderTest.java
+!src/test/java/ru/mfa/
+src/test/java/ru/mfa/*
+!src/test/java/ru/mfa/signature/
+src/test/java/ru/mfa/signature/*
+!src/test/java/ru/mfa/signature/DigitalSignatureServiceTest.java
 !src/test/resources/
 src/test/resources/*
 !src/test/resources/application.yml
@@ -77,3 +85,5 @@ src/test/resources/*
 src/test/resources/mockito-extensions/*
 !src/test/resources/mockito-extensions/org.mockito.plugins.MockMaker
 !src/test/resources/signing.jks
+src/test/*
+src/test/
