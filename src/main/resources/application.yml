@@ -38,6 +38,15 @@ license:
 malware-signatures:
   first-bytes-hex-length: ${MALWARE_SIGNATURE_FIRST_BYTES_HEX_LENGTH:16}
 
+storage:
+  minio:
+    enabled: ${MINIO_ENABLED:true}
+    endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+    access-key: ${MINIO_ACCESS_KEY:pifms-app}
+    secret-key: ${MINIO_SECRET_KEY:pifms-app-secret-12345678}
+    bucket: ${MINIO_SIGNATURE_BUCKET:pifms-signature-files}
+    presigned-url-ttl-seconds: ${MINIO_PRESIGNED_URL_TTL_SECONDS:600}
+
 signature:
   key-store-path: classpath:${JKS_NAME}
   key-store-type: JKS

@@ -41,7 +41,8 @@ jobs:
             JKS_NAME: ${{ secrets.JKS_NAME }} 
             JKS_PASSWORD: ${{ secrets.JKS_PASSWORD }} 
             KEY_NAME: ${{ secrets.KEY_NAME }} 
-            JKS_B: ${{ secrets.JKS_B  }} 
+            SIGNATURE_KEY_PASSWORD: ${{ secrets.SIGNATURE_KEY_PASSWORD }}
+            SIGNATURE_ALGORITHM: ${{ secrets.SIGNATURE_ALGORITHM }}
             SIGNATURE_KEY_STORE_BASE64: ${{ secrets.SIGNATURE_KEY_STORE_BASE64 }}
             SIGNATURE_PUBLIC_KEY: ${{ vars.SIGNATURE_PUBLIC_KEY }}
         
@@ -49,10 +50,6 @@ jobs:
             - name: Checkout repository
               uses: actions/checkout@v4
             
-            - name: decode jks
-              run: |-
-                echo "$JKS_B" | base64 -d > "src/main/resources/${JKS_NAME}" 
-
             - name: decode signature keystore
               run: |-
                 echo "$SIGNATURE_KEY_STORE_BASE64" | base64 -d > "src/main/resources/${JKS_NAME}"

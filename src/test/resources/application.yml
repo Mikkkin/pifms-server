@@ -29,6 +29,15 @@ license:
 malware-signatures:
   first-bytes-hex-length: 16
 
+storage:
+  minio:
+    enabled: false
+    endpoint: http://localhost:9000
+    access-key: pifms-app
+    secret-key: pifms-app-secret-12345678
+    bucket: pifms-signature-files
+    presigned-url-ttl-seconds: 600
+
 signature:
   key-store-path: classpath:signing.jks
   key-store-type: JKS
